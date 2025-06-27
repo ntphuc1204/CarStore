@@ -1,0 +1,10 @@
+# Bỏ qua Visual Studio folder
+.vs/
+
+# Bỏ qua các file build
+bin/
+obj/
+
+# Bỏ qua các file hệ điều hành
+*.DS_Store
+Thumbs.db

@@ -1,0 +1,32 @@
+.auth-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  margin-top: 64px;
+}
+
+.auth-title {
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.auth-btn {
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+.auth-btn:hover {
+  background-color: #20995a;
+  color: #fff;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 16px;
+}
