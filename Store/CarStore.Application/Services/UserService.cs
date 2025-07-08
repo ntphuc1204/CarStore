@@ -4,7 +4,8 @@ using CarStore.Application.Interfaces;
 using CarStore.Domain.Entities;
 using CarStore.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
-    
+using Microsoft.EntityFrameworkCore;
+
 
 namespace CarStore.Application.Services
 {
@@ -52,6 +53,48 @@ namespace CarStore.Application.Services
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
+
+        public async Task<bool> UpdatePassUser(string userId, UpdatePassUserDto dto)
+        {
+            if (dto.NewPassword != dto.ConfirmNewPassword)
+                return false;
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+            return result.Succeeded;
+        }
+
+        public async Task<List<UserDto>> searchAsync(string key)
+        {
+            var users = await _userManager.Users
+                .Where(u =>
+                    u.UserName!.Contains(key) ||
+                    u.Email!.Contains(key) ||
+                    u.PhoneNumber!.Contains(key))
+                .ToListAsync();
+
+            var result = new List<UserDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                result.Add(new UserDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName!,
+                    Email = user.Email!,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,
+                    Roles = roles.ToList()
+                });
+            }
+
+            return result;
+        }
+
     }
 
 }

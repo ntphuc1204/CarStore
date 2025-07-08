@@ -72,6 +72,15 @@ namespace CarStore.Application.Services
         {
             return await _bookingRepository.GetBookingStatisticsAsync();
         }
+
+        public async Task Ship(int id)
+        {
+            var booking =await _bookingRepository.GetByIdAsync(id);
+            if(booking == null) throw new Exception("Không tìm thấy đơn hàng.");
+            booking.Status = 3;
+            await _bookingRepository.UpdateAsync(booking);
+
+        }
     }
 
 }

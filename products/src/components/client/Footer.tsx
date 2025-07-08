@@ -1,6 +1,9 @@
+import MessageModal from "./MessageModal";
+
 export default function Footer() {
   return (
     <>
+      <MessageModal></MessageModal>
       <footer className="bg-dark text-white pt-5 pb-3">
         <div className="container">
           <div className="row">

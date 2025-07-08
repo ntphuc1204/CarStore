@@ -23,5 +23,12 @@ namespace CarStore.Application.Dtos
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
     }
+    public class UpdatePassUserDto
+    {
+        public string CurrentPassword { get; set; } = null!;
+        public string NewPassword { get; set; } = null!;
+        public string ConfirmNewPassword { get; set; } = null!;
+
+    }
 
 }

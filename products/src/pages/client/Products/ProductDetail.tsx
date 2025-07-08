@@ -1,29 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Footer from "../../../components/client/Footer";
 import Header from "../../../components/client/Header";
 import { getById, type Product } from "../../../services/productService";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  getByProductId,
+  type PromotionDto,
+} from "../../../services/promotionService";
+import { format } from "date-fns";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [productDetail, setProcductDetail] = useState<Product>();
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
-
-  const fecthProductsDetail = async (id: string) => {
-    const data = await getById(Number(id));
-    setProcductDetail(data);
-  };
-
+  const [promotions, setPromotion] = useState<PromotionDto[]>([]);
+  const [selectedPromotionId, setSelectedPromotionId] = useState<number | null>(
+    null
+  );
+  const token = useRef(localStorage.getItem("accessToken"));
   useEffect(() => {
-    if (id) {
-      fecthProductsDetail(id);
-    }
+    (async () => {
+      if (id) {
+        const data = await getById(Number(id));
+        const dataPromotion = await getByProductId(Number(id));
+        setPromotion(dataPromotion);
+        setProcductDetail(data);
+      }
+    })();
   }, [id]);
 
   const onSubmit = () => {
-    const token = localStorage.getItem("accessToken");
-
     if (!token) {
       navigate("/login");
       return;
@@ -34,6 +41,7 @@ export default function ProductDetail() {
       JSON.stringify({
         product: productDetail,
         quantity: quantity,
+        promotion: selectedPromotionId,
       })
     );
     navigate("/booking");
@@ -57,10 +65,34 @@ export default function ProductDetail() {
                 <div className="card-body d-flex justify-content-between">
                   <div className="">
                     <h2 className="card-title">{productDetail.name}</h2>
+                    <div className="d-flex"></div>
                     <h5 className="card-text">
                       ${productDetail.price.toLocaleString("de-DE")}
                       <small className="text-muted">* Starting MSRP</small>
                     </h5>
+                    <div className="mt-1">
+                      <select
+                        id="promotionSelect"
+                        className="form-select"
+                        value={selectedPromotionId ?? ""}
+                        onChange={(e) =>
+                          setSelectedPromotionId(
+                            e.target.value ? Number(e.target.value) : null
+                          )
+                        }
+                      >
+                        <option value="">-- Không áp dụng khuyến mãi --</option>
+                        {promotions.map((promo) => (
+                          <option key={promo.id} value={promo.id}>
+                            {promo.title} giảm {promo.discountPercent}% (đến{" "}
+                            {promo.endDate
+                              ? format(new Date(promo.endDate), "dd-MM-yyyy")
+                              : ""}
+                            )
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div className="d-flex justify-content-center align-items-center gap-3">
                     <div className=" d-flex align-items-center">
@@ -80,7 +112,7 @@ export default function ProductDetail() {
                         className="btn btn-primary order"
                         onClick={onSubmit}
                       >
-                        Order
+                        Đặt xe
                       </button>
                     </div>
                   </div>

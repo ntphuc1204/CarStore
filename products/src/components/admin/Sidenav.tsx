@@ -18,7 +18,8 @@ import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PersonIcon from "@mui/icons-material/Person";
 import ReceiptIcon from "@mui/icons-material/Receipt";
-
+import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
+import MessageIcon from "@mui/icons-material/Message";
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme) => ({
@@ -137,7 +138,7 @@ export default function Sidenav() {
                 <HomeIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Home"
+                primary="Trang chủ"
                 sx={[
                   open
                     ? {
@@ -190,7 +191,7 @@ export default function Sidenav() {
                 <LocalGroceryStoreIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Products"
+                primary="Sản phẩm"
                 sx={[
                   open
                     ? {
@@ -243,7 +244,7 @@ export default function Sidenav() {
                 <InventoryIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Category"
+                primary="Hãng xe"
                 sx={[
                   open
                     ? {
@@ -349,7 +350,113 @@ export default function Sidenav() {
                 <ReceiptIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Booking"
+                primary="Đặt xe"
+                sx={[
+                  open
+                    ? {
+                        opacity: 1,
+                      }
+                    : {
+                        opacity: 0,
+                      },
+                ]}
+              />
+            </ListItemButton>
+          </ListItem>
+          <ListItem
+            disablePadding
+            sx={{ display: "block" }}
+            onClick={() => {
+              navigate("/admin/promotion");
+            }}
+          >
+            <ListItemButton
+              sx={[
+                {
+                  minHeight: 48,
+                  px: 2.5,
+                },
+                open
+                  ? {
+                      justifyContent: "initial",
+                    }
+                  : {
+                      justifyContent: "center",
+                    },
+              ]}
+            >
+              <ListItemIcon
+                sx={[
+                  {
+                    minWidth: 0,
+                    justifyContent: "center",
+                  },
+                  open
+                    ? {
+                        mr: 3,
+                      }
+                    : {
+                        mr: "auto",
+                      },
+                ]}
+              >
+                <RequestQuoteIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Khuyến mãi"
+                sx={[
+                  open
+                    ? {
+                        opacity: 1,
+                      }
+                    : {
+                        opacity: 0,
+                      },
+                ]}
+              />
+            </ListItemButton>
+          </ListItem>
+          <ListItem
+            disablePadding
+            sx={{ display: "block" }}
+            onClick={() => {
+              navigate("/admin/message");
+            }}
+          >
+            <ListItemButton
+              sx={[
+                {
+                  minHeight: 48,
+                  px: 2.5,
+                },
+                open
+                  ? {
+                      justifyContent: "initial",
+                    }
+                  : {
+                      justifyContent: "center",
+                    },
+              ]}
+            >
+              <ListItemIcon
+                sx={[
+                  {
+                    minWidth: 0,
+                    justifyContent: "center",
+                  },
+                  open
+                    ? {
+                        mr: 3,
+                      }
+                    : {
+                        mr: "auto",
+                      },
+                ]}
+              >
+                <MessageIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Tư vấn"
                 sx={[
                   open
                     ? {

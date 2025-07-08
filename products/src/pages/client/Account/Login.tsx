@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,8 +24,10 @@ export default function Login() {
       // Lưu token và role vào localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("userId", userId);
       localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
+
+      //setUserId(userId); // 👈 cập nhật vào context
 
       if (role === "User" || role === "Admin") {
         alert("Đăng nhập thành công");

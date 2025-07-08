@@ -23,7 +23,7 @@ export default function ProductPagination() {
   useEffect(() => {
     const fetchProductsPage = async () => {
       try {
-        const pageSize = 5;
+        const pageSize = 6;
         const data = await getProductByPage(page, pageSize);
         console.log("api", data);
         setProduct(data.data);
@@ -39,9 +39,7 @@ export default function ProductPagination() {
       {" "}
       <section className="container mt-5 mb-5">
         <div className="row g-4">
-          <h1 className="text-center mb-3 fw-semibold">
-            Newest Arrivals at Our Store
-          </h1>
+          <h1 className="text-center mb-3 fw-semibold">Tất cả các sản phẩm</h1>
           {products.map((item) => (
             <div className="col-md-4">
               <Link

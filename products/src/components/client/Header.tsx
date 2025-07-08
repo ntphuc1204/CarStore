@@ -54,22 +54,22 @@ export default function Header() {
           <ul className="navbar-nav d-flex justify-content-center align-items-center">
             <li className="nav-item dropdown">
               <a className="nav-link fw-semibold" href="/">
-                Home
+                Trang chủ
               </a>
             </li>
             <li className="nav-item dropdown">
               <a className="nav-link fw-semibold" href="/Products/">
-                Products
+                Sản phẩm
               </a>
             </li>
             <li className="nav-item dropdown">
               <a className="nav-link fw-semibold" href="/Products/category">
-                Categorys
+                Hãng xe
               </a>
             </li>
             <li className="nav-item dropdown">
               <a className="nav-link fw-semibold" href="#">
-                Contact
+                Liên hệ
               </a>
             </li>
 
@@ -107,17 +107,18 @@ export default function Header() {
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
                     <a className="dropdown-item" href="/status">
-                      <i className="bi bi-bookmark-star me-2"></i>Status
+                      <i className="bi bi-bookmark-star me-2"></i>Trạng thái đơn
+                      hàng
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/">
-                      <i className="bi bi-person me-2"></i>Account
+                    <a className="dropdown-item" href="/AccountPage">
+                      <i className="bi bi-person me-2"></i>Tài khoản
                     </a>
                   </li>
                   <li>
                     <a className="dropdown-item" href="" onClick={handleLogout}>
-                      <i className="bi bi-box-arrow-in-left me-2"></i>Logout
+                      <i className="bi bi-box-arrow-in-left me-2"></i>Đăng xuất
                     </a>
                   </li>
                 </ul>
@@ -125,12 +126,12 @@ export default function Header() {
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
                     <a className="dropdown-item" href="/login">
-                      <i className="bi bi-box-arrow-in-right me-2"></i>Login
+                      <i className="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
                     </a>
                   </li>
                   <li>
                     <a className="dropdown-item" href="/register">
-                      <i className="bi bi-person-add me-2"></i>Register
+                      <i className="bi bi-person-add me-2"></i>Đăng kí
                     </a>
                   </li>
                 </ul>

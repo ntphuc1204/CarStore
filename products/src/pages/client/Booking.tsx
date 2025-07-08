@@ -5,14 +5,20 @@ import { useEffect, useState } from "react";
 import { createBooking } from "../../services/bookingService";
 import type { Product } from "../../services/productService";
 import { getByUser, upDateByUser } from "../../services/userService";
+import {
+  getByPromotionId,
+  type PromotionDto,
+} from "../../services/promotionService";
 
 export default function Booking() {
   interface TempBooking {
     product: Product;
     quantity: number;
+    promotion: number;
   }
   const navigate = useNavigate();
   const [booking, setBooking] = useState<TempBooking>();
+  const [discountPercent, setDiscountPercent] = useState<PromotionDto>();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,7 +27,27 @@ export default function Booking() {
 
   const product = booking?.product;
   const quantity = booking?.quantity || 0;
+  const idPromo = booking?.promotion || 0;
   const total = product ? product.price * quantity : 0;
+  const disPromo = discountPercent?.initialQuantity || 0;
+  const totalByPromo = total - (total * disPromo) / 100;
+  console.log(idPromo);
+  useEffect(() => {
+    if (!idPromo || idPromo <= 0) {
+      setDiscountPercent(undefined);
+      return;
+    }
+
+    (async () => {
+      try {
+        const data = await getByPromotionId(idPromo);
+        setDiscountPercent(data);
+      } catch (err) {
+        console.error("Lỗi khi lấy khuyến mãi:", err);
+        setDiscountPercent(undefined);
+      }
+    })();
+  }, [idPromo]);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -32,8 +58,6 @@ export default function Booking() {
           setEmail(user.email);
           setPhone(user.phoneNumber || "");
           setAddress(user.address || "");
-
-          localStorage.setItem("userId", user.id); // Lưu lại để cập nhật sau
         })
         .catch((err) => {
           console.error("Lỗi khi lấy thông tin user:", err);
@@ -91,6 +115,7 @@ export default function Booking() {
           bookingDate: new Date().toISOString(),
           note: "",
           status: 0,
+          promotionId: booking.promotion,
         },
         token
       );
@@ -110,15 +135,16 @@ export default function Booking() {
       <Header />
       <div className="booking">
         <div className="container pt-5 pb-5">
-          <h2 className="text-center mb-4">BOOKING</h2>
+          <h2 className="text-center mb-4">HÓA ĐƠN</h2>
           <nav className="mb-4">
-            <a href="#">HOME</a>/ <span className="text-muted">BOOKING</span>
+            <a href="#">Trang chủ</a>/{" "}
+            <span className="text-muted">Hóa đơn</span>
           </nav>
 
           <div className="row">
             <div className="col-md-6">
               <div className="bg-white p-4 rounded shadow-sm">
-                <div className="section-title mb-3">BILLING DETAILS</div>
+                <div className="section-title mb-3">Thông tin cá nhân</div>
                 <form onSubmit={handleSubmit}>
                   <input
                     type="text"
@@ -153,7 +179,7 @@ export default function Booking() {
                     required
                   />
                   <button type="submit" className="btn btn-primary w-100">
-                    PLACE ORDER
+                    Đặt hàng
                   </button>
                 </form>
               </div>
@@ -161,12 +187,12 @@ export default function Booking() {
 
             <div className="col-md-6">
               <div className="bg-white p-4 rounded shadow-sm">
-                <div className="section-title mb-3">INVOICE</div>
+                <div className="section-title mb-3">Chi tiết hóa đơn</div>
                 <table className="table summary-table">
                   <tbody>
                     <tr>
-                      <th>PRODUCT</th>
-                      <th className="text-end">Amount</th>
+                      <th>Sản phẩm</th>
+                      <th className="text-end">Chỉ số</th>
                     </tr>
                     <tr>
                       <td>{product?.name}</td>
@@ -175,21 +201,27 @@ export default function Booking() {
                       </td>
                     </tr>
                     <tr>
-                      <td>Category</td>
+                      <td>Hãng xe</td>
                       <td className="text-end">{product?.categoryName}</td>
                     </tr>
                     <tr>
-                      <td>Quantity</td>
+                      <td>Số lượng</td>
                       <td className="text-end">{quantity}</td>
                     </tr>
                     <tr>
-                      <td>VAT</td>
-                      <td className="text-end">0</td>
+                      <td>Khuyến mãi</td>
+                      {discountPercent ? (
+                        <td className="text-end">
+                          {discountPercent.discountPercent}%
+                        </td>
+                      ) : (
+                        <td className="text-end">0</td>
+                      )}
                     </tr>
                     <tr>
-                      <th className="text-danger">Total</th>
+                      <th className="text-danger">Tổng tiền</th>
                       <th className="text-end text-danger">
-                        ${total.toLocaleString("de-DE")}
+                        ${totalByPromo.toLocaleString("de-DE")}
                       </th>
                     </tr>
                   </tbody>

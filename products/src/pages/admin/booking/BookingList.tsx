@@ -25,6 +25,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import ComfirmBooking from "./ConfirmBooking";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 const style = {
   position: "absolute",
@@ -106,7 +107,7 @@ export default function BookingList() {
           component="div"
           sx={{ padding: "20px" }}
         >
-          Booking List
+          Danh sách đặt xe
         </Typography>
         <Divider />
         <Box height={10} />
@@ -117,7 +118,7 @@ export default function BookingList() {
           sx={{ marginRight: 1, marginLeft: 1 }}
         >
           <TextField
-            label="Search"
+            label="Tìm kiếm"
             variant="outlined"
             size="small"
             value={searchText}
@@ -138,12 +139,12 @@ export default function BookingList() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>Client</TableCell>
-                <TableCell align="center">Image</TableCell>
-                <TableCell align="center">Phone</TableCell>
-                <TableCell align="center">Price</TableCell>
-                <TableCell align="center">Quanty</TableCell>
-                <TableCell align="center">Action</TableCell>
+                <TableCell>Khách hàng</TableCell>
+                <TableCell align="center">Hình ảnh</TableCell>
+                <TableCell align="center">SĐT</TableCell>
+                <TableCell align="center">Giá tiền</TableCell>
+                <TableCell align="center">Số lượng</TableCell>
+                <TableCell align="center">Xác nhận</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -189,7 +190,7 @@ export default function BookingList() {
                                   onClick={() => handleComfirm(item)}
                                 />
                               );
-                            case 1:
+                            case 3:
                               return (
                                 <DoneIcon
                                   style={{
@@ -206,6 +207,17 @@ export default function BookingList() {
                                   style={{
                                     fontSize: "20px",
                                     color: "red",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => handleComfirm(item)}
+                                />
+                              );
+                            case 1:
+                              return (
+                                <LocalShippingIcon
+                                  style={{
+                                    fontSize: "20px",
+                                    color: "#78e3fd",
                                     cursor: "pointer",
                                   }}
                                   onClick={() => handleComfirm(item)}

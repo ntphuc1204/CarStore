@@ -16,7 +16,7 @@ export default function ProductList() {
       <section className="container mt-5 mb-5">
         <div className="row g-4">
           <h1 className="text-center mb-3 fw-semibold">
-            Newest Arrivals at Our Store
+            Sản phẩm mới nhất của store
           </h1>
           {products.slice(0, 6).map((item) => (
             <div className="col-md-4">

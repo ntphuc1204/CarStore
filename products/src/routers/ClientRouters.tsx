@@ -8,6 +8,7 @@ import Booking from "../pages/client/Booking";
 import Status from "../pages/client/Status";
 import ProductClient from "../pages/client/ProductClient";
 import CategoryClient from "../pages/client/CategoryClient";
+import AccountPage from "../pages/client/Account/AccountPage";
 
 export default function ClientRouter() {
   return (
@@ -20,6 +21,7 @@ export default function ClientRouter() {
       <Route path="/Products/" element={<ProductClient />} />
       <Route path="/ProductDetail/:id" element={<ProductDetail />} />
       <Route path="/Products/category" element={<CategoryClient />} />
+      <Route path="/AccountPage" element={<AccountPage />} />
     </Routes>
   );
 }

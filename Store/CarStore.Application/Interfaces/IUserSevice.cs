@@ -13,5 +13,9 @@ namespace CarStore.Application.Interfaces
         Task<UserDto> GetById(string id);
         Task<UserDto?> GetCurrentAsync(string userId);
         Task<bool> UpdateUser(UpdateUserDto dto);
+
+        Task<bool> UpdatePassUser(string userId, UpdatePassUserDto dto);
+        Task<List<UserDto>> searchAsync(string key);
+     
     }
 }

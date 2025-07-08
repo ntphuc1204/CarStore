@@ -38,7 +38,8 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = "yourIssuer",
             ValidAudience = "yourAudience",
             ClockSkew = TimeSpan.Zero, 
-            RoleClaimType = ClaimTypes.Role
+            RoleClaimType = ClaimTypes.Role,
+
         };
     });// Add services to the container.
 
@@ -48,6 +49,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
 
 //Mappper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -61,8 +65,13 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserSevice, UserService>();
-
-
+builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IConversationService, ConversationService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
@@ -74,7 +83,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-// Cho phép truy c?p ?nh t?nh t? th? m?c /uploads
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(

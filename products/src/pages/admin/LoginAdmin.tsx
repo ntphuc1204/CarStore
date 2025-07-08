@@ -16,12 +16,13 @@ export default function LoginAdmin() {
     e.preventDefault();
     try {
       const res = await login(form);
-      const { accessToken, refreshToken, role } = res.data;
+      const { accessToken, refreshToken, role, userId } = res.data;
 
       // Lưu token và role vào localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
 
       if (role === "Admin") {
         alert("Đăng nhập admin thành công");

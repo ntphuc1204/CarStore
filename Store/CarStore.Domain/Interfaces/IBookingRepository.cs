@@ -10,6 +10,7 @@ namespace CarStore.Domain.Interfaces
         Task<Booking?> GetByIdAsync(int id);
         Task UpdateAsync(Booking booking);
         Task CancelledAsync(Booking booking);
+
         Task<List<Booking>> searchBooking(string key);
         Task<BookingStatisticsDto> GetBookingStatisticsAsync();
     }

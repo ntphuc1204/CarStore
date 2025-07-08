@@ -57,5 +57,25 @@ namespace CarStore.Api.Controllers
             var user = await _service.GetCurrentAsync(userId);
             return Ok(user);
         }
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(UpdatePassUserDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized();
+
+            var result = await _service.UpdatePassUser(userId, dto);
+            if (!result)
+                return BadRequest("Thay đổi mật khẩu không thành công.");
+
+            return Ok("Đổi mật khẩu thành công");
+        }
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUsers([FromQuery] string key)
+        {
+            var users = await _service.searchAsync(key);
+            return Ok(users);
+        }
+
     }
 }

@@ -52,6 +52,14 @@ namespace CarStore.Api.Controllers
             await _bookingService.ConfirmAsync(id);
             return Ok(new { message = "Đã xác nhận đặt xe" });
         }
+        [HttpPut("ship/{id}")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> ShipBooking(int id)
+        {
+            await _bookingService.Ship(id);
+            return Ok(new { message = "Giao hàng thành công!" });
+        }
+
         [HttpPut("cancelled/{id}")]
         [Authorize(Roles = "User")]
         public async Task<IActionResult> CancelledBooking(int id)

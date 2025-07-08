@@ -3,11 +3,7 @@ using CarStore.Domain.Interfaces;
 using CarStore.Infrastructure.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CarStore.Infrastructure.Repository
 {

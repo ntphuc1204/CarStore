@@ -39,7 +39,30 @@ namespace CarStore.Application.Mapper
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product)) // map sang ProductDto
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.BookingDate))
-                .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note));
+                .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+                .ForMember(dest => dest.PromotionID, opt => opt.MapFrom(src => src.Promotion.Id))
+                .ForMember(dest => dest.PromotionTitle, opt => opt.MapFrom(src => src.Promotion.Title))
+                .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.Promotion.DiscountPercent));
+
+            CreateMap<Promotion, PromotionDto>()
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
+                   src.EndDate < DateTime.Now ? "Hết hạn" :
+                   src.StartDate > DateTime.Now ? "Sắp diễn ra" : "Đang áp dụng"
+               ));
+
+            CreateMap<PromotionUpdate, Promotion>();
+            // PromotionCreateDto → Promotion
+            CreateMap<PromotionCreateDto, Promotion>()
+                .ForMember(dest => dest.InitialQuantity, opt => opt.MapFrom(src => src.Quantity));
+
+            //Message
+            CreateMap<CreateConversationDto, Conversation>()
+           .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+           .ForMember(dest => dest.LastMessageTime, opt => opt.MapFrom(_ => DateTime.UtcNow));
+
+            CreateMap<Message, MessageDto>();
+            CreateMap<Message, MessageByUserDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Conversation.User1Id));
         }
     }
 }

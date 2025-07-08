@@ -47,7 +47,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
   return (
     <Box sx={{ p: 2, position: "relative" }}>
       <Typography variant="h5" align="center">
-        Comfirm Booking
+        Chi tiết đơn hàng
       </Typography>
       <IconButton
         onClick={onClose}
@@ -70,7 +70,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 6 }}>
           <TextField
-            label="Client"
+            label="Khách hàng"
             variant="outlined"
             size="small"
             fullWidth
@@ -80,7 +80,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 6 }}>
           <TextField
-            label="Phone"
+            label="SĐT"
             variant="outlined"
             size="small"
             type="text"
@@ -91,7 +91,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 12 }}>
           <TextField
-            label="Name"
+            label="Tên xe"
             variant="outlined"
             size="small"
             fullWidth
@@ -101,7 +101,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 12 }}>
           <TextField
-            label="Address"
+            label="Địa chỉ"
             variant="outlined"
             size="small"
             fullWidth
@@ -111,7 +111,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 3 }}>
           <TextField
-            label="Category"
+            label="Hãng xe"
             variant="outlined"
             size="small"
             fullWidth
@@ -121,7 +121,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 3 }}>
           <TextField
-            label="Date"
+            label="Ngày đặt"
             value={
               booking?.bookingDate
                 ? format(new Date(booking?.bookingDate), "dd-MM-yyyy")
@@ -134,7 +134,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 3 }}>
           <TextField
-            label="Quantity"
+            label="Số lượng"
             variant="outlined"
             size="small"
             fullWidth
@@ -144,7 +144,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
         </Grid>
         <Grid size={{ xs: 3 }}>
           <TextField
-            label="Total"
+            label="Tổng tiền"
             variant="outlined"
             size="small"
             fullWidth
@@ -180,7 +180,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
                     fullWidth
                     onClick={handleSubmit}
                   >
-                    Submit
+                    Xác nhận đơn hàng
                   </Button>
                 );
               case 1:
@@ -191,7 +191,7 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
                     sx={{ backgroundColor: "green" }}
                     onClick={onClose}
                   >
-                    Confirmed
+                    Đang giao hàng
                   </Button>
                 );
               case 2:
@@ -202,7 +202,18 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
                     sx={{ backgroundColor: "red" }}
                     onClick={onClose}
                   >
-                    Canceled
+                    Khách hàng đã hủy
+                  </Button>
+                );
+              case 3:
+                return (
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ backgroundColor: "red" }}
+                    onClick={onClose}
+                  >
+                    Giao hàng thành công
                   </Button>
                 );
               default:

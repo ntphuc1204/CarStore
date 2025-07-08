@@ -45,9 +45,7 @@ export default function CategoryClient() {
         <div className="row">
           <div className="col-md-3 mb-4">
             <ul className="list-unstyled">
-              <li className="fw-bold mb-2 border-bottom pb-2">
-                Crossovers & SUVs
-              </li>
+              <li className="fw-bold mb-2 border-bottom pb-2">Hãng xe</li>
               <li
                 className={`mb-3 fw-medium ${
                   activeCategoryId === null ? "text-primary" : ""

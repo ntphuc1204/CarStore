@@ -18,6 +18,7 @@ namespace CarStore.Application.Interfaces
         Task BookingCancelled(int id);
         Task<List<BookingDetailDto>> searchBooking(string keywword);
         Task<BookingStatisticsDto> GetStatisticsAsync();
+        Task Ship(int id);
     }
 
 }

@@ -8,6 +8,7 @@ export interface BookingRequest {
   bookingDate?: string;
   note?: string;
   status: number;
+  promotionId: number;
 }
 export interface BookingDto {
   id: number;
@@ -32,6 +33,13 @@ export const createBooking = async (
     },
   });
 };
+export interface DashboardStats {
+  totalBookings: number;
+  pending: number;
+  confirmed: number;
+  cancelled: number;
+  totalRevenue: number;
+}
 export const getAllBooking = async (): Promise<BookingDto[]> => {
   const res = await axios.get("/Booking");
   return res.data;
@@ -50,5 +58,13 @@ export const cancelledBooking = async (id: number) => {
 };
 export const searchBookings = async (keyword: string) => {
   const res = await axios.get(`/Booking/search?keyword=${keyword}`);
+  return res.data;
+};
+export const getDashboardStats = async () => {
+  const res = await axios.get(`/Booking/statistics`);
+  return res.data;
+};
+export const shipdBooking = async (id: number) => {
+  const res = await axios.put(`/Booking/ship/${id}`);
   return res.data;
 };
