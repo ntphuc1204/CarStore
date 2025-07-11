@@ -66,16 +66,6 @@ export default function Header() {
                 Hãng xe
               </a>
             </li>
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link fw-semibold"
-                href="#"
-                id="openChatModal"
-                onClick={(e) => e.preventDefault()}
-              >
-                Liên hệ
-              </a>
-            </li>
 
             <li
               className={`nav-item dropdown search-container position-relative me-1 ms-1 ${
