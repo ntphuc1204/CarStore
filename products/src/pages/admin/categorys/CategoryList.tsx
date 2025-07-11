@@ -1,31 +1,29 @@
 import * as React from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Modal,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+  Typography,
+} from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Modal, TextField } from "@mui/material";
-import {
-  deleteCategory,
-  getAllCategorys,
-  searchCategorys,
-  type Category,
-} from "../../../services/categoryService";
-import EditCategory from "./EditCategory";
-import { AddCategory } from "./AddCategory";
-import { toast } from "react-toastify";
 import SearchIcon from "@mui/icons-material/Search";
+import { AddCategory } from "./AddCategory";
+import EditCategory from "./EditCategory";
+import { useCategoryListViewModel } from "../../../viewmodels/category/listCategoryViewModel";
 
 const style = {
   position: "absolute",
@@ -40,153 +38,72 @@ const style = {
 };
 
 export default function CategoryList() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(3);
-  const [categorys, setCategorys] = React.useState<Category[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const [reload, setReload] = React.useState(false);
-  const [editModalOpen, setEditModalOpen] = React.useState(false);
-  const [selectedCategory, setSelectedCategory] =
-    React.useState<Category | null>(null);
-  const [searchText, setSearchText] = React.useState("");
+  const vm = useCategoryListViewModel();
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleReload = () => setReload(!reload);
-
-  const handleEdit = (category: Category) => {
-    setSelectedCategory(category);
-    setEditModalOpen(true);
-  };
-
-  const fecthCategory = async () => {
-    const data = await getAllCategorys();
-    setCategorys(data);
-  };
-  React.useEffect(() => {
-    fecthCategory();
-  }, [reload]);
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Bạn có chắc muốn xóa danh mục này không?")) {
-      console.log("id xoa dm", id);
-      try {
-        await deleteCategory(id);
-        toast.success("Xóa danh mục thành công!");
-        fecthCategory();
-      } catch (err) {
-        toast.error("Xóa thất bại!");
-        console.error(err);
-      }
-    }
-  };
-
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchText(value);
-    if (!value.trim()) {
-      const data = await getAllCategorys();
-      setCategorys(data);
-      return;
-    }
-    try {
-      const result = await searchCategorys(value);
-      setCategorys(result);
-    } catch (err) {
-      console.log(err);
-    }
-  };
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <AddCategory
-              onClose={() => setOpen(false)}
-              onSuccess={handleReload}
-            ></AddCategory>
-          </Box>
-        </Modal>
-        <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
-          <Box sx={style}>
-            <EditCategory
-              category={selectedCategory}
-              onClose={() => setEditModalOpen(false)}
-              onUpdated={fecthCategory}
-            />
-          </Box>
-        </Modal>
-      </div>
-      <Typography
-        gutterBottom
-        variant="h5"
-        component="div"
-        sx={{ padding: "20px" }}
-      >
-        Categorys List
+      {/* Modal thêm */}
+      <Modal open={vm.openAddModal} onClose={() => vm.setOpenAddModal(false)}>
+        <Box sx={style}>
+          <AddCategory
+            onClose={() => vm.setOpenAddModal(false)}
+            onSuccess={vm.fetchCategorys}
+          />
+        </Box>
+      </Modal>
+
+      {/* Modal sửa */}
+      <Modal open={vm.editModalOpen} onClose={() => vm.setEditModalOpen(false)}>
+        <Box sx={style}>
+          <EditCategory
+            category={vm.selectedCategory}
+            onClose={() => vm.setEditModalOpen(false)}
+            onUpdated={vm.fetchCategorys}
+          />
+        </Box>
+      </Modal>
+
+      <Typography gutterBottom variant="h5" sx={{ p: 2 }}>
+        Category List
       </Typography>
       <Divider />
       <Box height={10} />
-      <Stack
-        direction="row"
-        spacing={2}
-        className="my-2 mb-2 "
-        sx={{ marginRight: 1, marginLeft: 1 }}
-      >
+      <Stack direction="row" spacing={2} sx={{ px: 2, mb: 1 }}>
         <TextField
           label="Search"
           variant="outlined"
           size="small"
-          value={searchText}
-          onChange={handleSearch}
+          value={vm.searchText}
+          onChange={(e) => vm.handleSearch(e.target.value)}
           sx={{ minWidth: 300 }}
           InputProps={{
             endAdornment: <SearchIcon />,
           }}
         />
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, height: 36 }}
-        ></Typography>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
         <Button
           variant="contained"
           endIcon={<AddCircleIcon />}
-          onClick={handleOpen}
+          onClick={() => vm.setOpenAddModal(true)}
           sx={{ height: 40 }}
         >
           Add
         </Button>
       </Stack>
-      <Box height={10} />
+
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ paddingLeft: 5 }}>Logo</TableCell>
+              <TableCell>Logo</TableCell>
               <TableCell>Name</TableCell>
               <TableCell align="center">Brand</TableCell>
               <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {categorys
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {vm.categorys
+              .slice(vm.page * vm.rowsPerPage, vm.page * vm.rowsPerPage + vm.rowsPerPage)
               .map((category) => (
                 <TableRow key={category.id}>
                   <TableCell>
@@ -203,29 +120,18 @@ export default function CategoryList() {
                   </TableCell>
                   <TableCell>{category.name}</TableCell>
                   <TableCell align="center">{category.brand}</TableCell>
-                  <TableCell>
-                    <Stack
-                      spacing={0.5}
-                      direction="row"
-                      justifyContent="center"
-                      alignItems="center"
-                    >
+                  <TableCell align="center">
+                    <Stack direction="row" spacing={1} justifyContent="center">
                       <EditIcon
-                        onClick={() => handleEdit(category)}
-                        style={{
-                          fontSize: "20px",
-                          color: "blue",
-                          cursor: "pointer",
+                        onClick={() => {
+                          vm.setSelectedCategory(category);
+                          vm.setEditModalOpen(true);
                         }}
+                        style={{ cursor: "pointer", color: "blue" }}
                       />
-
                       <DeleteIcon
-                        onClick={() => handleDelete(category.id)}
-                        style={{
-                          fontSize: "20px",
-                          color: "darkred",
-                          cursor: "pointer",
-                        }}
+                        onClick={() => vm.handleDelete(category.id)}
+                        style={{ cursor: "pointer", color: "darkred" }}
                       />
                     </Stack>
                   </TableCell>
@@ -234,17 +140,18 @@ export default function CategoryList() {
           </TableBody>
         </Table>
       </TableContainer>
-      <div className="my-mui-table">
-        <TablePagination
-          rowsPerPageOptions={[3, 5, 10]}
-          component="div"
-          count={categorys.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </div>
+      <TablePagination
+        rowsPerPageOptions={[3, 5, 10]}
+        component="div"
+        count={vm.categorys.length}
+        rowsPerPage={vm.rowsPerPage}
+        page={vm.page}
+        onPageChange={(_e, newPage) => vm.setPage(newPage)}
+        onRowsPerPageChange={(e) => {
+          vm.setRowsPerPage(+e.target.value);
+          vm.setPage(0);
+        }}
+      />
     </Paper>
   );
 }

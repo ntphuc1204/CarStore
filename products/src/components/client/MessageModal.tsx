@@ -1,18 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+// 📁 src/components/chat/MessageModal.tsx
+import { useEffect } from "react";
 import { Modal } from "bootstrap";
-import { addMes, getMesById, type MesDto } from "../../services/messageService";
-import { useNavigate } from "react-router-dom";
+import { useMessageModalViewModel } from "../../viewmodels/message/messageViewModel";
 
 export default function MessageModal() {
-  const [messages, setMessages] = useState<MesDto[]>([]);
-  const chatBodyRef = useRef<HTMLDivElement>(null);
-  const [newMsg, setNewMsg] = useState({
-    receiverId: "1b85b683-3c11-4649-bb4d-89a85c31fc9d",
-    content: "",
-  });
-  const shouldScrollRef = useRef(false);
-  const navigate = useNavigate();
-  const token = localStorage.getItem("accessToken") || "";
+  const {
+    messages,
+    newMsg,
+    setNewMsg,
+    chatBodyRef,
+    shouldScrollRef,
+    scrollToBottom,
+    fetchMessages,
+    handleSend,
+    token,
+    userId,
+    navigate,
+  } = useMessageModalViewModel();
 
   useEffect(() => {
     const trigger = document.getElementById("openChatModal");
@@ -30,61 +34,22 @@ export default function MessageModal() {
       modal.show();
       shouldScrollRef.current = true;
 
-      setTimeout(() => {
-        scrollToBottom();
-      }, 200);
+      setTimeout(() => scrollToBottom(), 200);
     };
 
     trigger.addEventListener("click", handleClick);
-
-    return () => {
-      trigger.removeEventListener("click", handleClick);
-    };
+    return () => trigger.removeEventListener("click", handleClick);
   }, [navigate, token]);
 
-  const scrollToBottom = () => {
-    const el = chatBodyRef.current;
-    if (el) {
-      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    }
-  };
   useEffect(() => {
-    // Chỉ scroll nếu cờ được bật
     if (shouldScrollRef.current) {
       const timeout = setTimeout(() => {
         scrollToBottom();
-        shouldScrollRef.current = false; // reset cờ
+        shouldScrollRef.current = false;
       }, 100);
-
-      return () => clearTimeout(timeout); // cleanup
+      return () => clearTimeout(timeout);
     }
   }, [messages]);
-
-  const userId = localStorage.getItem("userId") || "";
-  const handleSend = async () => {
-    if (!newMsg.content.trim()) return;
-    await addMes(newMsg);
-    setNewMsg({ ...newMsg, content: "" });
-    const data = await getMesById(userId);
-    setMessages(data || []);
-    shouldScrollRef.current = true;
-  };
-
-  useEffect(() => {
-    if (!userId) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const data = await getMesById(userId);
-        setMessages(data || []);
-        shouldScrollRef.current = true;
-      } catch (err) {
-        console.error("Lỗi khi tải tin nhắn:", err);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [userId]);
 
   return (
     <>
@@ -121,9 +86,7 @@ export default function MessageModal() {
             >
               <div className="d-flex flex-column gap-1">
                 {messages.length === 0 ? (
-                  <div className="text-center text-muted">
-                    Chưa có tin nhắn nào
-                  </div>
+                  <div className="text-center text-muted">Chưa có tin nhắn nào</div>
                 ) : (
                   messages.map((msg) => (
                     <div

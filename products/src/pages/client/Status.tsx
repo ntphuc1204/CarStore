@@ -1,55 +1,17 @@
-import { useEffect, useState } from "react";
 import Footer from "../../components/client/Footer";
 import Header from "../../components/client/Header";
-import {
-  cancelledBooking,
-  getBookingByUser,
-  shipdBooking,
-  type BookingDto,
-} from "../../services/bookingService";
-import { toast } from "react-toastify";
+import { useStatusViewModel } from "../../viewmodels/statusViewModel";
 
 export default function Status() {
-  const [booking, setBooking] = useState<BookingDto[]>();
-  const [status, setStaus] = useState(0);
-  const fetchBoking = async () => {
-    const data = await getBookingByUser();
-    setBooking(data);
-  };
-  const [showModal, setShowModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<BookingDto | null>(
-    null
-  );
-  const handleCancelled = async (id: number) => {
-    try {
-      await cancelledBooking(id);
-      toast.success("Xác nhận đã hủy đơn!");
-      setStaus(id);
-    } catch (error) {
-      console.error("Lỗi khi cập nhật:", error);
-    }
-  };
-  const handledShip = async (id: number) => {
-    try {
-      await shipdBooking(id);
-      toast.success("Xác nhận giao hàng thành công!");
-      setStaus(id);
-    } catch (error) {
-      console.error("Lỗi khi cập nhật:", error);
-    }
-  };
-  useEffect(() => {
-    fetchBoking();
-  }, [status]);
-  const handleShowDetail = (booking: BookingDto) => {
-    setSelectedBooking(booking);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedBooking(null);
-  };
+  const {
+    bookings,
+    selectedBooking,
+    showModal,
+    handleCancelled,
+    handleShipped,
+    handleShowDetail,
+    handleCloseModal,
+  } = useStatusViewModel();
   return (
     <>
       <Header></Header>
@@ -58,7 +20,7 @@ export default function Status() {
           <div className="row">
             <div className="col-12">
               <h3 className="mb-3">Trạng thái đơn hàng</h3>
-              {booking?.map((item) => (
+              {bookings?.map((item) => (
                 <div
                   className="booking-card d-flex align-items-start gap-4 border rounded mb-3"
                   data-status="0"
@@ -127,7 +89,7 @@ export default function Status() {
                             return (
                               <button
                                 className="btn btn-sm btn-outline-success"
-                                onClick={() => handledShip(item.id)}
+                                onClick={() => handleShipped(item.id)}
                               >
                                 Giao hàng thành công
                               </button>

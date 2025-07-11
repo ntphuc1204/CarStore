@@ -1,34 +1,29 @@
 import * as React from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import EditIcon from "@mui/icons-material/Edit";
-import Modal from "@mui/material/Modal";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { TextField } from "@mui/material";
-import { toast } from "react-toastify";
-
-import SearchIcon from "@mui/icons-material/Search";
 import {
-  deletePromotion,
-  getAllPromotion,
-  searchPromotion,
-  type PromotionDto,
-} from "../../../services/promotionService";
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Typography,
+  Divider,
+  Button,
+  Box,
+  Stack,
+  Modal,
+  TextField,
+} from "@mui/material";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from "@mui/icons-material/Search";
+import { format } from "date-fns";
 import AddPromotion from "./AddPromotion";
 import EditPromotion from "./EditPromotion";
-import { format } from "date-fns";
+import { usePromotionListViewModel } from "../../../viewmodels/promotion/listPromotionViewModel";
 
 const style = {
   position: "absolute",
@@ -43,119 +38,55 @@ const style = {
 };
 
 export default function PromotionList() {
-  const [promotion, setPromotion] = React.useState<PromotionDto[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(6);
-  const [open, setOpen] = React.useState(false);
-  const [reload, setReload] = React.useState(false);
-  const [searchText, setSearchText] = React.useState("");
-  const [selectedPromotion, setSelectedPromotion] =
-    React.useState<PromotionDto | null>(null);
-  const [editModalOpen, setEditModalOpen] = React.useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleReload = () => {
-    setReload(!reload); // toggle để kích hoạt useEffect
-  };
-
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-  const fetchPromotion = async () => {
-    const data = await getAllPromotion();
-    setPromotion(data);
-  };
-
-  React.useEffect(() => {
-    fetchPromotion();
-  }, [reload]);
-
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchText(value);
-
-    if (!value.trim()) {
-      const data = await getAllPromotion();
-      setPromotion(data);
-      return;
-    }
-
-    try {
-      const results = await searchPromotion(value);
-      setPromotion(results);
-    } catch (error) {
-      console.error("Search error:", error);
-    }
-  };
-
-  const handleEdit = (promotion: PromotionDto) => {
-    setSelectedPromotion(promotion);
-    setEditModalOpen(true);
-  };
-
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Bạn có chắc muốn xóa khuyến mãi này không?")) {
-      try {
-        await deletePromotion(id);
-        toast.success("Xóa khuyến mãi thành công!");
-        fetchPromotion();
-      } catch (err) {
-        toast.error("Xóa thất bại!");
-        console.error(err);
-      }
-    }
-  };
+  const {
+    promotions,
+    searchText,
+    handleSearch,
+    handleDelete,
+    handleEdit,
+    selectedPromotion,
+    setSelectedPromotion,
+    handleReload,
+    open,
+    handleOpen,
+    handleClose,
+    editModalOpen,
+    setEditModalOpen,
+    rowsPerPage,
+    page,
+    handleChangePage,
+    handleChangeRowsPerPage,
+  } = usePromotionListViewModel();
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <AddPromotion
-              onClose={() => setOpen(false)}
-              onSuccess={handleReload}
-            ></AddPromotion>
-          </Box>
-        </Modal>
-        <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
-          <Box sx={style}>
-            <EditPromotion
-              promotion={selectedPromotion}
-              onClose={() => setEditModalOpen(false)}
-              onUpdated={fetchPromotion}
-            />
-          </Box>
-        </Modal>
-      </div>
-      <Typography
-        gutterBottom
-        variant="h5"
-        component="div"
-        sx={{ padding: "20px" }}
-      >
+      {/* Modal Thêm */}
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={style}>
+          <AddPromotion onClose={handleClose} onSuccess={handleReload} />
+        </Box>
+      </Modal>
+
+      {/* Modal Sửa */}
+      <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+        <Box sx={style}>
+          <EditPromotion
+            promotion={selectedPromotion}
+            onClose={() => setEditModalOpen(false)}
+            onUpdated={handleReload}
+          />
+        </Box>
+      </Modal>
+
+      {/* Header */}
+      <Typography variant="h5" sx={{ padding: "20px" }}>
         Products List
       </Typography>
       <Divider />
       <Box height={10} />
-      <Stack
-        direction="row"
-        spacing={2}
-        className="my-2 mb-2 "
-        sx={{ marginRight: 1, marginLeft: 1 }}
-      >
+
+      {/* Thanh tìm kiếm + nút thêm */}
+      <Stack direction="row" spacing={2} sx={{ mx: 1 }}>
         <TextField
           label="Search"
           variant="outlined"
@@ -167,12 +98,7 @@ export default function PromotionList() {
             endAdornment: <SearchIcon />,
           }}
         />
-
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, height: 36 }}
-        ></Typography>
+        <Box flexGrow={1} />
         <Button
           variant="contained"
           endIcon={<AddCircleIcon />}
@@ -182,9 +108,12 @@ export default function PromotionList() {
           Add
         </Button>
       </Stack>
+
       <Box height={10} />
+
+      {/* Bảng dữ liệu */}
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Tên khuyến mãi</TableCell>
@@ -198,7 +127,7 @@ export default function PromotionList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {promotion
+            {promotions
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((item) => (
                 <TableRow key={item.id}>
@@ -207,40 +136,25 @@ export default function PromotionList() {
                   <TableCell align="center">{item.quantity}</TableCell>
                   <TableCell align="center">{item.initialQuantity}</TableCell>
                   <TableCell align="center">
-                    {item?.startDate
-                      ? format(new Date(item?.startDate), "dd-MM-yyyy")
+                    {item.startDate
+                      ? format(new Date(item.startDate), "dd-MM-yyyy")
                       : ""}
                   </TableCell>
                   <TableCell align="center">
-                    {item?.endDate
-                      ? format(new Date(item?.endDate), "dd-MM-yyyy")
+                    {item.endDate
+                      ? format(new Date(item.endDate), "dd-MM-yyyy")
                       : ""}
                   </TableCell>
                   <TableCell align="center">{item.status}</TableCell>
-
-                  <TableCell>
-                    <Stack
-                      spacing={0.5}
-                      direction="row"
-                      justifyContent="center"
-                      alignItems="center"
-                    >
+                  <TableCell align="center">
+                    <Stack direction="row" spacing={1} justifyContent="center">
                       <EditIcon
                         onClick={() => handleEdit(item)}
-                        style={{
-                          fontSize: "20px",
-                          color: "blue",
-                          cursor: "pointer",
-                        }}
+                        sx={{ color: "blue", cursor: "pointer" }}
                       />
-
                       <DeleteIcon
                         onClick={() => handleDelete(item.id)}
-                        style={{
-                          fontSize: "20px",
-                          color: "darkred",
-                          cursor: "pointer",
-                        }}
+                        sx={{ color: "darkred", cursor: "pointer" }}
                       />
                     </Stack>
                   </TableCell>
@@ -249,18 +163,17 @@ export default function PromotionList() {
           </TableBody>
         </Table>
       </TableContainer>
-      <div className="my-mui-table">
-        <TablePagination
-          sx={{ margin: 0 }}
-          rowsPerPageOptions={[6, 12, 18]}
-          component="div"
-          count={promotion.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </div>
+
+      {/* Phân trang */}
+      <TablePagination
+        rowsPerPageOptions={[6, 12, 18]}
+        component="div"
+        count={promotions.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Paper>
   );
 }

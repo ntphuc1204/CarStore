@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Typography,
@@ -16,114 +15,22 @@ import {
 } from "@mui/material";
 import Sidenav from "../../components/admin/Sidenav";
 import Navbar from "../../components/admin/Navbar";
-import {
-  addMes,
-  getConversation,
-  getMesAdmin,
-  type GetListUserMes,
-  type MesDto,
-} from "../../services/messageService";
-import { getByIdUser } from "../../services/userService";
+import { useAdminMessageViewModel } from "../../viewmodels/message/messageAdminViewModel";
 
 export default function Message() {
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<GetListUserMes[]>([]);
-  const [userNames, setUserNames] = useState<Record<string, string>>({});
-  const [newMsg, setNewMsg] = useState({
-    receiverId: "",
-    content: "",
-  });
-  const [messages, setMessages] = useState<MesDto[]>([]);
-  const adminId = localStorage.getItem("userId");
-  const shouldScrollRef = useRef(false);
-  const [activeConvId, setActiveConvId] = useState<number | null>(null);
-
-  const handleOpen = (convId: number) => {
-    const selectedConv = user.find((u) => u.id === convId);
-    if (!selectedConv) return;
-
-    setNewMsg((prev) => ({
-      ...prev,
-      receiverId: selectedConv.user1Id,
-    }));
-
-    setActiveConvId(convId);
-    shouldScrollRef.current = true;
-    fetchMes(convId);
-    setOpen(true);
-  };
-
-  const fetchMes = async (id: number) => {
-    const data = await getConversation(id);
-    setMessages(data);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setActiveConvId(null);
-  };
-
-  // Lấy danh sách user + tên user
-  const fetchUserNames = async (data: GetListUserMes[]) => {
-    const nameMap: Record<string, string> = {};
-    for (const conv of data) {
-      const user = await getByIdUser(conv.user1Id);
-      nameMap[conv.user1Id] = user.userName;
-    }
-    setUserNames(nameMap);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const data = await getMesAdmin();
-      setUser(data);
-      fetchUserNames(data);
-    })();
-  }, [activeConvId]);
-
-  //Mỗi 5s update tin nhắn mới nhất
-  useEffect(() => {
-    if (!open || activeConvId === null) return;
-
-    const interval = setInterval(async () => {
-      shouldScrollRef.current = true;
-      await fetchMes(activeConvId);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [open, activeConvId]);
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const updatedUserList = await getMesAdmin();
-      setUser(updatedUserList);
-      fetchUserNames(updatedUserList);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  //Auto scroll xuống tin nhắn mới nhất
-  useEffect(() => {
-    if (shouldScrollRef.current && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-      shouldScrollRef.current = false;
-    }
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!newMsg.content.trim() || !newMsg.receiverId) return;
-
-    await addMes(newMsg);
-    setNewMsg((prev) => ({ ...prev, content: "" }));
-    shouldScrollRef.current = true;
-    const conv = user.find((u) => u.user1Id === newMsg.receiverId);
-    if (conv) await fetchMes(conv.id);
-    const updatedUserList = await getMesAdmin();
-    setUser(updatedUserList);
-    fetchUserNames(updatedUserList);
-  };
+  const {
+    open,
+    user,
+    userNames,
+    newMsg,
+    setNewMsg,
+    messages,
+    handleOpen,
+    handleClose,
+    handleSend,
+    adminId,
+    messagesEndRef,
+  } = useAdminMessageViewModel();
 
   return (
     <div className="bgcolor">
@@ -141,8 +48,6 @@ export default function Message() {
                   mb: 2,
                   border: "1px solid #ccc",
                   borderRadius: "20px",
-                  display: "flex",
-                  alignItems: "center",
                 }}
               >
                 <ListItemAvatar>
@@ -150,33 +55,16 @@ export default function Message() {
                 </ListItemAvatar>
                 <ListItemText
                   primary={
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                    >
+                    <Stack direction="row" justifyContent="space-between">
                       <Typography fontWeight={600}>
                         {userNames[conv.user1Id] ?? "Đang tải..."}
                       </Typography>
                       <Typography fontSize="0.8rem" color="text.secondary">
-                        {new Date(conv.lastMessageTime).toLocaleString(
-                          "vi-VN",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          }
-                        )}
+                        {new Date(conv.lastMessageTime).toLocaleString("vi-VN")}
                       </Typography>
                     </Stack>
                   }
-                  secondary={
-                    conv.messages && conv.messages.length > 0
-                      ? conv.messages[0].content
-                      : "Không có tin nhắn"
-                  }
+                  secondary={conv.messages?.[0]?.content ?? "Không có tin nhắn"}
                 />
               </ListItemButton>
             ))}
@@ -196,7 +84,7 @@ export default function Message() {
                   gap: 1,
                   p: 1,
                   mb: 2,
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "#fff",
                   borderRadius: 2,
                 }}
               >
@@ -222,7 +110,6 @@ export default function Message() {
                 <div ref={messagesEndRef} />
               </Box>
 
-              {/* Nhập tin nhắn */}
               <Stack direction="row" spacing={1}>
                 <TextField
                   fullWidth
@@ -230,7 +117,10 @@ export default function Message() {
                   size="small"
                   value={newMsg.content}
                   onChange={(e) =>
-                    setNewMsg((prev) => ({ ...prev, content: e.target.value }))
+                    setNewMsg((prev) => ({
+                      ...prev,
+                      content: e.target.value,
+                    }))
                   }
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 />

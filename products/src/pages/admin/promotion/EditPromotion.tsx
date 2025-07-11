@@ -8,110 +8,39 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import React, { useEffect, useState } from "react";
-import {
-  getById,
-  getByIdCategory,
-  type Product,
-} from "../../../services/productService";
-import {
-  getAllCategorys,
-  type Category,
-} from "../../../services/categoryService";
-import { toast } from "react-toastify";
-import {
-  updatePromotion,
-  type PromotionDto,
-} from "../../../services/promotionService";
+// import React, { useEffect, useState } from "react";
+// import {
+//   getById,
+//   getByIdCategory,
+//   type Product,
+// } from "../../../services/productService";
+// import {
+//   getAllCategorys,
+//   type Category,
+// } from "../../../services/categoryService";
+// import { toast } from "react-toastify";
+import { type PromotionDto } from "../../../services/promotionService";
+import { useEditPromotionViewModel } from "../../../viewmodels/promotion/editPromotionViewModel";
 
 type Props = {
   promotion: PromotionDto | null;
   onClose: () => void;
   onUpdated: () => void;
 };
+
 export default function EditPromotion({
   promotion,
   onClose,
   onUpdated,
 }: Props) {
-  const [products, setProduct] = useState<Product[]>([]);
-  const [categorys, setCategorys] = useState<Category[]>([]);
-  const [productDetail, setProductDetail] = useState<Product | null>(null);
-
-  const [formData, setFormData] = useState({
-    id: promotion?.id || 0,
-    title: promotion?.title || "",
-    categoryID: 0,
-    productId: promotion?.productId || 0,
-    quantity: promotion?.quantity || 0,
-    discountPercent: promotion?.discountPercent || 0,
-    startDate: promotion?.startDate
-      ? formatDateForInput(promotion.startDate)
-      : "",
-    endDate: promotion?.endDate ? formatDateForInput(promotion.endDate) : "",
-  });
-  function formatDateForInput(dateString: string): string {
-    const date = new Date(dateString);
-    const offsetMs = date.getTimezoneOffset() * 60000;
-    const localDate = new Date(date.getTime() - offsetMs);
-    return localDate.toISOString().split("T")[0];
-  }
-
-  useEffect(() => {
-    if (promotion?.productId) {
-      (async () => {
-        const product = await getById(promotion.productId);
-        console.log(product);
-        setProductDetail(product);
-      })();
-    }
-  }, [promotion]);
-
-  useEffect(() => {
-    if (productDetail) {
-      setFormData((prev) => ({
-        ...prev,
-        categoryID: productDetail.categoryID,
-      }));
-    }
-  }, [productDetail]);
-
-  useEffect(() => {
-    getAllCategorys()
-      .then(setCategorys)
-      .catch((error) => console.error("Lỗi khi lấy danh mục:", error));
-  }, []);
-
-  useEffect(() => {
-    if (formData.categoryID) {
-      (async () => {
-        const data = await getByIdCategory(formData.categoryID);
-        setProduct(data);
-      })();
-    }
-  }, [formData.categoryID]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async () => {
-    if (!promotion?.id) {
-      console.error("ID không hợp lệ");
-      return;
-    }
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { categoryID, ...submitData } = formData;
-      await updatePromotion(promotion?.id, submitData);
-      toast.success("Sửa sản phẩm thành công!");
-      onUpdated();
-      onClose();
-    } catch (error) {
-      console.error("Lỗi khi cập nhật:", error);
-    }
-  };
+  const {
+    formData,
+    handleInputChange,
+    setFormData,
+    handleSubmit,
+    categories,
+    products,
+  } = useEditPromotionViewModel(promotion, onUpdated, onClose);
 
   return (
     <Box sx={{ p: 2, position: "relative" }}>
@@ -150,7 +79,7 @@ export default function EditPromotion({
             setFormData({ ...formData, categoryID: Number(e.target.value) })
           }
         >
-          {categorys.map((category) => (
+          {categories.map((category: any) => (
             <MenuItem key={category.id} value={category.id}>
               {category.name}
             </MenuItem>

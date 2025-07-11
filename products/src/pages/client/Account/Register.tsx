@@ -1,26 +1,9 @@
-import { useState } from "react";
 import Header from "../../../components/client/Header";
 import Footer from "../../../components/client/Footer";
-import { register } from "../../../services/authService";
-import { useNavigate } from "react-router-dom";
+import { useRegisterViewModel } from "../../../viewmodels/registerViewModel";
 
 export default function Register() {
-  const [form, setForm] = useState({ userName: "", email: "", password: "" });
-  const navigate = useNavigate();
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Register with:", form);
-
-    if (form != null) {
-      register(form);
-      alert("Dang ki thanh cong");
-      navigate("/login");
-    }
-  };
+  const { form, handleChange, handleSubmit } = useRegisterViewModel();
 
   return (
     <>

@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
-import { getAllProducts, type Product } from "../../services/productService";
+// import { getAllProducts, type Product } from "../../services/productService";
+
 import { Link } from "react-router-dom";
+import { ProductViewModel } from "../../viewmodels/productViewModel";
 
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const fecthProducts = async () => {
-    const data = await getAllProducts();
-    setProducts(data);
-  };
-  useEffect(() => {
-    fecthProducts();
-  }, []);
+  // const [products, setProducts] = useState<Product[]>([]);
+  // const fecthProducts = async () => {
+  //   const data = await getAllProducts();
+  //   setProducts(data);
+  // };
+  // useEffect(() => {
+  //   fecthProducts();
+  // }, []);
+  const { products } = ProductViewModel();
   return (
     <>
       <section className="container mt-5 mb-5">
@@ -18,7 +21,7 @@ export default function ProductList() {
           <h1 className="text-center mb-3 fw-semibold">
             Sản phẩm mới nhất của store
           </h1>
-          {products.slice(0, 6).map((item) => (
+          {products.slice(0, 6).map((item: any) => (
             <div className="col-md-4">
               <Link
                 to={`/ProductDetail/${item.id}`}
@@ -54,4 +57,7 @@ export default function ProductList() {
       </section>
     </>
   );
+}
+function useProductViewModel(): { products: any; loading: any } {
+  throw new Error("Function not implemented.");
 }

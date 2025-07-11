@@ -15,22 +15,24 @@ import {
   Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { getAllUsers, type User } from "../../../services/userService";
+// import { getAllUsers, type User } from "../../../services/userService";
+import { UserViewModel } from "../../../viewmodels/userViewmodel";
 
 export default function UserList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [users, setUsers] = React.useState<User[]>([]);
+  // const [users, setUsers] = React.useState<User[]>([]);
   const [searchText, setSearchText] = React.useState("");
 
-  const fetchUsers = async () => {
-    const data = await getAllUsers();
-    setUsers(data);
-  };
+  // const fetchUsers = async () => {
+  //   const data = await getAllUsers();
+  //   setUsers(data);
+  // };
+  const{ users } = UserViewModel();
 
-  React.useEffect(() => {
-    fetchUsers();
-  }, []);
+  // React.useEffect(() => {
+  //   fetchUsers();
+  // }, []);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);

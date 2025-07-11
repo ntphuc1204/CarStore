@@ -1,53 +1,15 @@
-import { useState } from "react";
+
 import Header from "../../../components/client/Header";
 import Footer from "../../../components/client/Footer";
 import "../../../LoginForm.css";
-import { login } from "../../../services/authService";
-import { useNavigate } from "react-router-dom";
+import { useLoginViewModel } from "../../../viewmodels/login/loginViewModel";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-
-  const navigate = useNavigate();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await login(form);
-      const { accessToken, refreshToken, userId, role } = res.data;
-
-      // Lưu token và role vào localStorage
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("role", role);
-      localStorage.setItem("userId", userId);
-
-      //setUserId(userId); // 👈 cập nhật vào context
-
-      if (role === "User" || role === "Admin") {
-        alert("Đăng nhập thành công");
-        navigate("/");
-      } else {
-        setError("Lỗi");
-      }
-    } catch (err: unknown) {
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { data?: string } };
-        setError(axiosError.response?.data || "Đăng nhập thất bại.");
-      } else {
-        setError("Lỗi không xác định.");
-      }
-    }
-  };
+  const { form, error, handleChange, handleSubmit } = useLoginViewModel();
 
   return (
     <>
-      <Header></Header>
+      <Header />
       <div className="container mb-5" style={{ maxWidth: "480px" }}>
         <div className="auth-container">
           <h2 className="auth-title">Login</h2>
@@ -84,7 +46,7 @@ export default function Login() {
           </p>
         </div>
       </div>
-      <Footer></Footer>
+      <Footer />
     </>
   );
 }

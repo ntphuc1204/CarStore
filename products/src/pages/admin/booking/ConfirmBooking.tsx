@@ -7,13 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { toast } from "react-toastify";
-import {
-  confirmBooking,
-  type BookingDto,
-} from "../../../services/bookingService";
+import { type BookingDto } from "../../../services/bookingService";
+import { useConfirmBookingViewModel } from "../../../viewmodels/booking/comfirmBookingViewModel";
 
 type Props = {
   booking: BookingDto | null;
@@ -21,28 +17,11 @@ type Props = {
   onUpdated: () => void;
 };
 export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (booking?.product?.img) {
-      setImagePreview(`https://localhost:7204/uploads/${booking.product.img}`);
-    }
-  }, [booking]);
-
-  const handleSubmit = async () => {
-    if (!booking?.id) {
-      console.error("ID không hợp lệ");
-      return;
-    }
-    try {
-      await confirmBooking(booking?.id);
-      toast.success("Confirm success!");
-      onUpdated();
-      onClose();
-    } catch (error) {
-      console.error("Lỗi khi cập nhật:", error);
-    }
-  };
+  const { imagePreview, handleSubmit } = useConfirmBookingViewModel(
+    booking,
+    onClose,
+    onUpdated
+  );
 
   return (
     <Box sx={{ p: 2, position: "relative" }}>

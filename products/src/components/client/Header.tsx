@@ -13,7 +13,6 @@ export default function Header() {
   const toggleSearch = () => {
     setSearchOpen((prev) => !prev);
 
-    // focus vào input nếu đang mở
     if (!searchOpen && searchInputRef.current) {
       setTimeout(() => searchInputRef.current?.focus(), 100);
     }

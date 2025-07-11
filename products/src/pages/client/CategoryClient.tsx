@@ -1,42 +1,16 @@
-import { useEffect, useState } from "react";
 import Footer from "../../components/client/Footer";
 import Header from "../../components/client/Header";
-import { getAllCategorys, type Category } from "../../services/categoryService";
-import {
-  getAllProducts,
-  getByIdCategory,
-  type Product,
-} from "../../services/productService";
 import { Link } from "react-router-dom";
+import { useCategoryClientViewModel } from "../../viewmodels/categoryViewModel";
 
 export default function CategoryClient() {
-  const [category, setCategory] = useState<Category[]>([]);
-  const [product, setProduct] = useState<Product[]>([]);
-  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
-
-  const fetchCategory = async () => {
-    const data = await getAllCategorys();
-    setCategory(data);
-  };
-
-  const fetchProducts = async (categoryId: number | null = null) => {
-    console.log("Idd: ", categoryId);
-    const data = categoryId
-      ? await getByIdCategory(categoryId)
-      : await getAllProducts();
-    setProduct(data);
-  };
-
-  useEffect(() => {
-    fetchCategory();
-    fetchProducts();
-  }, []);
-
-  const handleCategoryClick = (id: number) => {
-    console.log("id: ", id);
-    setActiveCategoryId(id);
-    fetchProducts(id);
-  };
+  const {
+    categories,
+    products,
+    activeCategoryId,
+    handleCategoryClick,
+    handleShowAll,
+  } = useCategoryClientViewModel();
 
   return (
     <>
@@ -54,12 +28,12 @@ export default function CategoryClient() {
                 <a
                   href="#"
                   className="text-decoration-none text-dark"
-                  onClick={() => fetchProducts(null)}
+                  onClick={handleShowAll}
                 >
                   Tất cả
                 </a>
               </li>
-              {category.map((item) => (
+              {categories.map((item) => (
                 <li
                   key={item.id}
                   className={`mb-3 d-flex align-items-center ${
@@ -80,10 +54,10 @@ export default function CategoryClient() {
 
           <div className="col-md-9">
             <div className="row row-cols-1 row-cols-md-3 g-4">
-              {product.length === 0 ? (
+              {products.length === 0 ? (
                 <p className="text-center">Không có sản phẩm nào.</p>
               ) : (
-                product.map((item) => (
+                products.map((item) => (
                   <div key={item.id} className="col">
                     <div className="col">
                       <Link

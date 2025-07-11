@@ -14,6 +14,7 @@ import {
 } from "../../../services/categoryService";
 import { toast } from "react-toastify";
 import { uploadImage } from "../../../services/fileService";
+import { useAddCategoryViewModel } from "../../../viewmodels/category/addCategoryViewModel";
 
 interface AddCategoryProps {
   onClose: () => void;
@@ -21,40 +22,13 @@ interface AddCategoryProps {
 }
 
 export function AddCategory({ onClose, onSuccess }: AddCategoryProps) {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-  });
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-  const handleSubmit = async () => {
-    try {
-      let uploadedImage = "";
-
-      if (imageFile) {
-        uploadedImage = await uploadImage(imageFile);
-      }
-
-      const category: CreateCategory = {
-        ...formData,
-        logo: uploadedImage,
-      };
-      console.log("Payload gửi:", category);
-      await createCategory(category);
-      toast.success("Thêm danh mục thành công!");
-      onSuccess();
-      onClose();
-    } catch (err) {
-      console.error("Lỗi khi thêm sản phẩm:", err);
-    }
-  };
+  const {
+    formData,
+    imagePreview,
+    handleChange,
+    handleImageChange,
+    handleSubmit,
+  } = useAddCategoryViewModel(onClose, onSuccess);
 
   return (
     <Box sx={{ p: 2, position: "relative" }}>
@@ -75,7 +49,7 @@ export function AddCategory({ onClose, onSuccess }: AddCategoryProps) {
             fullWidth
             name="name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={handleChange}
           />
         </Grid>
 
@@ -87,9 +61,7 @@ export function AddCategory({ onClose, onSuccess }: AddCategoryProps) {
             fullWidth
             name="brand"
             value={formData.brand}
-            onChange={(e) =>
-              setFormData({ ...formData, brand: e.target.value })
-            }
+            onChange={handleChange}
           />
         </Grid>
 

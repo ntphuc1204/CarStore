@@ -14,18 +14,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import {
-  getAllBooking,
-  searchBookings,
-  type BookingDto,
-} from "../../../services/bookingService";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import DoneIcon from "@mui/icons-material/Done";
 import ComfirmBooking from "./ConfirmBooking";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import { useBookingListViewModel } from "../../../viewmodels/booking/listBookingViewModel";
 
 const style = {
   position: "absolute",
@@ -40,53 +35,20 @@ const style = {
 };
 
 export default function BookingList() {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
-  const [booking, setBooking] = useState<BookingDto[]>([]);
-  const [selectedBooking, setSelectedBooking] = useState<BookingDto | null>(
-    null
-  );
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
-
-  const handleComfirm = async (booking: BookingDto) => {
-    await setSelectedBooking(booking);
-    await setEditModalOpen(true);
-  };
-
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-  const fetchBooking = async () => {
-    const data = await getAllBooking();
-    setBooking(data);
-  };
-  useEffect(() => {
-    fetchBooking();
-  }, []);
-
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchText(value);
-    if (!value.trim()) {
-      const data = await getAllBooking();
-      setBooking(data);
-      return;
-    }
-    try {
-      const result = await searchBookings(value);
-      setBooking(result);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const {
+    page,
+    rowsPerPage,
+    booking,
+    selectedBooking,
+    editModalOpen,
+    searchText,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    setEditModalOpen,
+    fetchBooking,
+    handleSearch,
+    handleComfirm,
+  } = useBookingListViewModel();
   return (
     <>
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
