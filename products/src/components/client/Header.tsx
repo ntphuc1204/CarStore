@@ -67,7 +67,12 @@ export default function Header() {
               </a>
             </li>
             <li className="nav-item dropdown">
-              <a className="nav-link fw-semibold" href="#">
+              <a
+                className="nav-link fw-semibold"
+                href="#"
+                id="openChatModal"
+                onClick={(e) => e.preventDefault()}
+              >
                 Liên hệ
               </a>
             </li>
