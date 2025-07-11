@@ -29,9 +29,6 @@ export default function AddProduct({ onClose, onSuccess }: AddProductProps) {
       <Typography variant="h5" align="center">
         Add Products
       </Typography>
-      <IconButton style={{ position: "absolute", top: "0", right: "0" }}>
-        <CloseIcon />
-      </IconButton>
       <Box height={30}></Box>
 
       <Grid container spacing={2}>
@@ -71,6 +68,7 @@ export default function AddProduct({ onClose, onSuccess }: AddProductProps) {
             size="small"
             type="number"
             name="quantity"
+            inputProps={{ min: 0 }}
             value={formData.quantity}
             onChange={handleChange}
             fullWidth
@@ -84,6 +82,7 @@ export default function AddProduct({ onClose, onSuccess }: AddProductProps) {
             size="small"
             type="number"
             name="price"
+            inputProps={{ min: 0 }}
             value={formData.price}
             onChange={handleChange}
             fullWidth

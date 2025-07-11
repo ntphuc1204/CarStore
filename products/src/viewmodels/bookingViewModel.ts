@@ -26,7 +26,7 @@ export function useBookingViewModel() {
   const quantity = booking?.quantity || 0;
   const idPromo = booking?.promotion || 0;
   const total = product ? product.price * quantity : 0;
-  const disPromo = discountPercent?.initialQuantity || 0;
+  const disPromo = discountPercent?.discountPercent || 0;
   const totalByPromo = total - (total * disPromo) / 100;
 
   useEffect(() => {

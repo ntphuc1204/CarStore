@@ -28,12 +28,6 @@ export default function ComfirmBooking({ booking, onClose, onUpdated }: Props) {
       <Typography variant="h5" align="center">
         Chi tiết đơn hàng
       </Typography>
-      <IconButton
-        onClick={onClose}
-        style={{ position: "absolute", top: "0", right: "0" }}
-      >
-        <CloseIcon />
-      </IconButton>
       <Box height={30}></Box>
 
       <Grid container spacing={2}>

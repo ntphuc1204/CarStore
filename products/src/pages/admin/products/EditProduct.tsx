@@ -32,9 +32,6 @@ export default function EditProduct({ product, onClose, onUpdated }: Props) {
       <Typography variant="h5" align="center">
         Edit Products
       </Typography>
-      <IconButton style={{ position: "absolute", top: "0", right: "0" }}>
-        <CloseIcon />
-      </IconButton>
       <Box height={30}></Box>
 
       <Grid container spacing={2}>
@@ -75,6 +72,7 @@ export default function EditProduct({ product, onClose, onUpdated }: Props) {
             type="number"
             fullWidth
             name="quantity"
+            inputProps={{ min: 0 }}
             value={formData.quantity}
             onChange={handleInputChange}
           />
@@ -88,6 +86,7 @@ export default function EditProduct({ product, onClose, onUpdated }: Props) {
             type="number"
             fullWidth
             name="price"
+            inputProps={{ min: 0 }}
             value={formData.price}
             onChange={handleInputChange}
           />

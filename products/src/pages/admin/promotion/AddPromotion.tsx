@@ -21,13 +21,15 @@ import CloseIcon from "@mui/icons-material/Close";
 // import { PromotionAdd } from "../../../services/promotionService";
 import { useAddPromotionViewModel } from "../../../viewmodels/promotion/addPromotionViewModel";
 
-
 type AddPromotionProps = {
   onClose: () => void;
   onSuccess: () => void;
 };
 
-export default function AddPromotion({ onClose, onSuccess }: AddPromotionProps) {
+export default function AddPromotion({
+  onClose,
+  onSuccess,
+}: AddPromotionProps) {
   const {
     formData,
     categorys,
@@ -42,9 +44,6 @@ export default function AddPromotion({ onClose, onSuccess }: AddPromotionProps) 
       <Typography variant="h5" align="center">
         Thêm khuyến mãi
       </Typography>
-      <IconButton style={{ position: "absolute", top: "0", right: "0" }}>
-        <CloseIcon />
-      </IconButton>
       <Box height={30}></Box>
 
       <Grid container spacing={2}>
@@ -107,6 +106,7 @@ export default function AddPromotion({ onClose, onSuccess }: AddPromotionProps) 
             size="small"
             type="number"
             name="quantity"
+            inputProps={{ min: 0 }}
             value={formData.quantity}
             onChange={handleChange}
             fullWidth
@@ -119,6 +119,7 @@ export default function AddPromotion({ onClose, onSuccess }: AddPromotionProps) 
             variant="outlined"
             size="small"
             type="number"
+            inputProps={{ min: 0, max: 99 }}
             name="discountPercent"
             value={formData.discountPercent}
             onChange={handleChange}

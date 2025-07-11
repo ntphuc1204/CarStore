@@ -47,9 +47,6 @@ export default function EditPromotion({
       <Typography variant="h5" align="center">
         Sửa khuyến mãi
       </Typography>
-      <IconButton style={{ position: "absolute", top: "0", right: "0" }}>
-        <CloseIcon />
-      </IconButton>
       <Box height={30}></Box>
 
       <Grid container spacing={2}>
